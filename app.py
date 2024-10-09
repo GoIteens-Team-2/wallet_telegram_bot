@@ -7,28 +7,28 @@ from aiogram.filters import CommandStart
 dp = Dispatcher()
 bot = Bot(token="TOKEN")
 
+
+
+
+
+user_data = {}
+
 @dp.message(CommandStart())
 async def commandstart(message: types.Message):
-    def write_inf(data, file_name):
-        data = json.dumps(data)
-        data = json.loads(str(data))
+    user_id = message.from_user.id
 
-        with open(file_name, 'w', encoding="utf-8") as file:
-            json.dump(data, file, indent=4)
+    if user_id not in user_data:
+        user_data[user_id] = {"transactions": []}
 
-    trunsuction = "path_to_file.json"
-
-    data = {
-        "trunsuction": []
-    }
-
-    data["trunsuction"].append(
+    user_data[user_id]["transactions"].append(
         {
-            "name": f"{trunsuction}"
+            "name": f"Transaction for user {user_id}"
         }
     )
 
-    write_inf(data, trunsuction)
+    file_name = f"user_{user_id}_data.json"
+    with open(file_name, 'w', encoding="utf-8") as file:
+        json.dump(user_data[user_id], file, indent=4)
 
 async def main():
     await dp.start_polling(bot)
