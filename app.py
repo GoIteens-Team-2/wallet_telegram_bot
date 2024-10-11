@@ -18,6 +18,13 @@ def load_user_data(user_id):
     except FileNotFoundError:
         user_data[user_id] = {"balance": 0, "transactions": []}
 
+keyboared = ReplyKeyboardMarkup(resize_keyboard=True) 
+keyboared.add(KeyboardButton("Старт"))
+keyboared.add(KeyboardButton("Прибуток")) 
+keyboared.add(KeyboardButton("Ваш баланс"))
+keyboared.add(KeyboardButton("Витрати"))
+keyboared.add(KeyboardButton("Історія"))
+
 def save_user_data(user_id):
     file_name = f"user_{user_id}_data.json"
     with open(file_name, 'w', encoding="utf-8") as file:
@@ -38,6 +45,33 @@ async def commandstart(message: Message):
     )
     
     await message.answer(welcome_message)
+
+@dp.message(lambda message: message.text =="Прибуток") 
+async def request_income_info(message: Message):
+    await message.answer("Будь ласка, введіть дохід у форматі: /income {сума} {опис} ") 
+
+@dp.message(lambda message: message.text == "Ваш Баланс") 
+async def show_balance(message: Message):
+    user_id = message.from_user.id
+    load_user_data(user_id)
+    await message.answer(f"Ваш поточний баланс: {user_data[user_id] ['balance']} грн. ") 
+
+@dp.message(lambda message: message.text == "Витрати") 
+sync def requst_expense_info(message: Message):
+    await message.answer("Будь ласка, введіть витрату у форматі: /expense {сума} {опис} ") 
+
+@dp.message(lambda message: message.text == "Історія") 
+async def show_history(message: Message):
+    user_id =message.from_user.id
+    load_user_data(user_id)
+    transactions = user_data[user_id].get("transactions",[])
+    if not transactions:
+        await message.answer("У вас немає транзакцій.") 
+        return
+
+        history = "\n".join([f"{idx+1}. {t['type']. capitalize()}: {t['description']} на {t['amount']} грн" for idx, t in enumerate(transactions)]) 
+        await message.answer(f"Історія ваших транзакцій:\n{history}")
+                             
 
 @dp.message(command=["income"])
 async def add_income(message: Message):
