@@ -1,9 +1,11 @@
 import json
 import asyncio
 from config import token
-from aiogram import Dispatcher, Bot, types
-from aiogram.filters import CommandStart
+from aiogram import Dispatcher, Bot
+from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
+import matplotlib.pyplot as plt
+
 
 dp = Dispatcher()
 bot = Bot(token=token)
@@ -39,7 +41,7 @@ async def commandstart(message: Message):
     
     await message.answer(welcome_message)
 
-@dp.message(command=["income"])
+@dp.message(Command("income"))
 async def add_income(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
@@ -56,9 +58,9 @@ async def add_income(message: Message):
     user_data[user_id]["transactions"].append({"type": "income", "amount": amount, "description": description})
     save_user_data(user_id)
 
-    await message.answer(f"Доход '{description}' на суму {amount} грн додано. Ваш новий баланс: {user_data[user_id]['balance']} грн.")
+    await message.answer(f"Дохід '{description}' на суму {amount} грн додано. Ваш новий баланс: {user_data[user_id]['balance']} грн.")
 
-@dp.message(command=["expense"])
+@dp.message(Command("expense"))
 async def add_expense(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
@@ -81,7 +83,7 @@ async def add_expense(message: Message):
 
     await message.answer(f"Витрату '{description}' на суму {amount} грн додано. Ваш новий баланс: {user_data[user_id]['balance']} грн.")
 
-@dp.message(command=["history"])
+@dp.message(Command("history"))
 async def transaction_history(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
@@ -93,6 +95,13 @@ async def transaction_history(message: Message):
 
     history = "\n".join([f"{idx+1}. {t['type'].capitalize()}: {t['description']} на {t['amount']} грн" for idx, t in enumerate(transactions)])
     await message.answer(f"Історія ваших транзакцій:\n{history}")
+
+@dp.message(Command("/currency chart"))
+async def transaction_history(message: Message):
+    pic = 'image.png'
+    bot.send_photo(pic)
+
+
 
 async def main():
     await dp.start_polling(bot)
