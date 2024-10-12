@@ -57,7 +57,7 @@ async def show_balance(message: Message):
     await message.answer(f"Ваш поточний баланс: {user_data[user_id] ['balance']} грн. ") 
 
 @dp.message(lambda message: message.text == "Витрати") 
-sync def requst_expense_info(message: Message):
+async def requst_expense_info(message: Message):
     await message.answer("Будь ласка, введіть витрату у форматі: /expense {сума} {опис} ") 
 
 @dp.message(lambda message: message.text == "Історія") 
