@@ -54,7 +54,7 @@ async def request_income_info(message: Message):
 async def show_balance(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
-    await message.answer(f"Ваш поточний баланс: {user_data[user_id] ['balance']} грн. ") 
+    await message.answer(f"Ваш поточний баланс: {user_data[user_id]['balance']} грн.")
 
 @dp.message(lambda message: message.text == "Витрати") 
 async def request_expense_info(message: Message):
@@ -71,8 +71,7 @@ async def show_history(message: Message):
 
         history = "\n".join([f"{idx+1}. {t['type'].capitalize()}: {t['description']} на {t['amount']} грн" for idx, t in enumerate(transactions)])
                              
-
-@dp.message(command=("income"))
+@dp.message(Command("income"))
 async def add_income(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
@@ -91,7 +90,7 @@ async def add_income(message: Message):
 
     await message.answer(f"Доход '{description}' на суму {amount} грн додано. Ваш новий баланс: {user_data[user_id]['balance']} грн.")
 
-@dp.message(command=("expense"))
+@dp.message(Command("expense"))
 async def add_expense(message: Message):
     user_id = message.from_user.id
     load_user_data(user_id)
