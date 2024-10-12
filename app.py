@@ -69,8 +69,7 @@ async def show_history(message: Message):
         await message.answer("У вас немає транзакцій.") 
         return
 
-        history = "\n".join([f"{idx+1}. {t['type']. capitalize()}: {t['description']} на {t['amount']} грн" for idx, t in enumerate(transactions)]) 
-        await message.answer(f"Історія ваших транзакцій:\n{history}")
+        history = "\n".join([f"{idx+1}. {t['type'].capitalize()}: {t['description']} на {t['amount']} грн" for idx, t in enumerate(transactions)])
                              
 
 @dp.message(command=("income"))
