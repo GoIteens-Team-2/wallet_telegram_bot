@@ -108,20 +108,3 @@ def save_user_data(user_id):
     file_name = f"user_{user_id}_data.json"
     with open(file_name, 'w', encoding="utf-8") as file:
         json.dump(user_data[user_id], file, indent=4)
-
-keyboared = ReplyKeyboardMarkup(
-    keyboard=[
-        [KeyboardButton(text="Старт")],
-        [KeyboardButton(text="Прибуток")],
-        [KeyboardButton(text="Ваш баланс")],
-        [KeyboardButton(text="Витрати")],
-        [KeyboardButton(text="Історія")]
-    ],
-    resize_keyboard=True
-)
-
-async def main():
-    await dp.start_polling(bot)
-
-if __name__ == "__main__":
-    asyncio.run(main())
