@@ -9,7 +9,7 @@ info_router = Router()
 @info_router.message(CommandStart())
 async def commandstart(message: Message):
     user_id = message.from_user.id
-    data_manager.load_user_data(user_id)
+    data_manager.load_user_data(user_id) 
     welcome_message = (
         f"Вітаємо, якщо потрібна допомога по боту впишіть команду '/help'"
     )
@@ -30,7 +30,6 @@ async def show_balance(message: Message):
     data_manager.load_user_data(user_id)
     await message.answer(f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн.")
 
-
 @info_router.message(F.text == "/help")
 async def show_balance(message: Message):
     user_id = message.from_user.id
@@ -43,3 +42,12 @@ async def show_balance(message: Message):
         f"/history - Переглянути історію транзакцій"
     )
     await message.answer(help_message)    
+@info_router.message(Command="about")
+async def about_command(message: Message):
+    about_message = (
+        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
+        "з описом того на шо була транзакція (за вашим бажанням). "
+        "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
+        "Але ця функція ще розробляється :'("
+    )
+    await message.answer(about_message)
