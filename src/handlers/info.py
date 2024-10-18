@@ -34,3 +34,13 @@ async def show_balance(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     await message.answer(f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн.")
+
+@info_router.message(Command(commands="about")) 
+async def about_command(message: Message):
+    about_message = (
+        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
+        "з описом того на шо була транзакція (за вашим бажанням). "
+        "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
+        "Але ця функція ще розробляється :'("
+    )
+    await message.answer(about_message)
