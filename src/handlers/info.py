@@ -43,7 +43,7 @@ async def show_balance(message: Message):
     )
     await message.answer(help_message)
     
-@info_router.message(F.text ==" /about")
+@info_router.message(F.text == "Що таке wallet-bot?")
 async def about_command(message: Message):
     about_message = (
         "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
