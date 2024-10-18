@@ -10,6 +10,11 @@ info_router = Router()
 async def commandstart(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
+keyboard=ReplyKeyboardMarkup(
+    keyboard=[
+        [KeyboardButton(text="Прибуток")], 
+       ],
+    resize_keyboard=True
     welcome_message = (
         f"Вітаємо, {message.from_user.first_name}!\n"
         f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн.\n"
@@ -18,7 +23,7 @@ async def commandstart(message: Message):
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
         f"/history - Переглянути історію транзакцій"
     )
-    await message.answer(welcome_message)
+    await message.answer(welcome_message,reply_markup=keyboard)
 
 @info_router.message(F.text == "Прибуток")
 async def request_income_info(message: Message):
