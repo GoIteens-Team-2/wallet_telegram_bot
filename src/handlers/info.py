@@ -1,8 +1,17 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message, ReplyKeyboard, KeyboardButton
-
 from ..service.data_management import data_manager
+from ..service.buttons import main_menu_keyboard
+
+@info_router.message(CommandStart())
+async def commandstart(message: Message):
+    user_id = message.from_user.id
+    data_manager.load_user_data(user_id)
+    welcome_message = (
+        "Вітаємо, якщо потрібна допомога по боту впишіть команду '/help'. Ось доступні опції:"
+    )
+    await message.answer(welcome_message, reply_markup=main_menu_keyboard()) 
 
 info_router = Router()
 
@@ -15,16 +24,6 @@ def main_menu_keyboard():
     KeyboardButton("Що таке wallet-bot?")) 
 return keyboard
     
-
-@info_router.message(CommandStart())
-async def commandstart(message: Message):
-    user_id = message.from_user.id
-    data_manager.load_user_data(user_id) 
-    welcome_message = (
-        f"Вітаємо, якщо потрібна допомога по боту впишіть команду '/help'""Ось доступні опції:"
-    )
-    await message.answer(welcome_message,reply_markup=main_menu_keyboared())
-
 @info_router.message(F.text == "Прибуток")
 async def request_income_info(message: Message):
     await message.answer("Будь ласка, введіть дохід у форматі: /income {сума} {опис}")
