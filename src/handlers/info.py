@@ -12,22 +12,16 @@ async def commandstart(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     welcome_message = (
-        "Вітаємо, якщо потрібна допомога по боту впишіть команду '/help'. Ось доступні опції:"
+        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
+        "з описом того на шо була транзакція (за вашим бажанням). "
+        "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
+        "Але ця функція ще розробляється :'("
+        "Якщо потрібна допомога впишіть команду '/help'"
     )
     await message.answer(welcome_message, reply_markup=main_menu_keyboard()) 
 
 
-@info_router.message(F.text == "Прибуток")
-async def request_income_info(message: Message):
-    await message.answer("Будь ласка, введіть дохід у форматі: /income {сума} {опис}")
-
-
-@info_router.message(F.text == "Витрати")
-async def request_expense_info(message: Message):
-    await message.answer("Будь ласка, введіть витрату у форматі: /expense {сума} {опис}")
-
-
-@info_router.message(F.text == "Мій баланс")
+@info_router.message(F.text == "balance")
 async def show_balance(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
@@ -43,17 +37,7 @@ async def show_balance(message: Message):
         f"Ось доступні команди:\n"
         f"/income {{сума}} {{опис}} - Додати дохід\n"
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
-        f"/history - Переглянути історію транзакцій"
+        f"/history - Переглянути історію транзакцій\n"
+        f"/balance - переглянути свій баланс"
     )
     await message.answer(help_message)
-  
-    
-@info_router.message(F.text == "Що таке wallet-bot?")
-async def about_command(message: Message):
-    about_message = (
-        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
-        "з описом того на шо була транзакція (за вашим бажанням). "
-        "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
-        "Але ця функція ще розробляється :'("
-    )
-    await message.answer(about_message)
