@@ -7,7 +7,7 @@ from ..keyboards.buttons import main_menu_keyboard
 
 info_router = Router()
 
-@info_router.message(CommandStart())
+@info_router.message(CommandStart(deep_link=True))
 async def commandstart(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
@@ -33,7 +33,6 @@ async def show_balance(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     help_message = (
-        f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн.\n"
         f"Ось доступні команди:\n"
         f"/income {{сума}} {{опис}} - Додати дохід\n"
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
