@@ -20,4 +20,5 @@ class DataManager:
         with open(file_name, 'w', encoding="utf-8") as file:
             json.dump(self.user_data[user_id], file, indent=4)
 
+
 data_manager = DataManager()

@@ -1,72 +1,109 @@
 import os
-import requests
+import json
 from aiogram import Bot, Dispatcher, types, Router
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
-from aiogram import F
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.filters import Command
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils import executor
+from datetime import datetime
+from aiogram import Bot, Dispatcher, types
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher import State
 
 currency_exchange_router = Router()
 
-API_URL = "https://api.exchangerate-api.com/v4/latest/USD"
 
-dp = Dispatcher(storage=MemoryStorage())
+currency_exchange_router = Router()
 
-def get_exchange_rates():
-    response = requests.get(API_URL)
-    return response.json()["rates"]
+class Form(StatesGroup):
+    waiting_for_currency_from = State()
+    waiting_for_amount = State()
+    waiting_for_currency_to = State()
 
-class ConversionState(StatesGroup):
-    amount = State()
-    from_currency = State()
-    to_currency = State()
 
-def currency_keyboard():
-    rates = get_exchange_rates()
-    builder = ReplyKeyboardBuilder()
-    for currency in rates.keys():
-        builder.button(text=currency)
-    builder.adjust(3) 
-    return builder.as_markup(resize_keyboard=True)
+@currency_exchange_router.message_handler(commands=['exchange'])
+async def cmd_exchange(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    currencies = ["USD", "EUR", "UAH"] 
+    for currency in currencies:
+        keyboard.add(currency)
+    await message.answer("Оберіть валюту, з якої будете переводити гроші:", reply_markup=keyboard)
+    await Form.waiting_for_currency_from.set()
 
-@dp.message(ConversionState.amount)
-async def process_amount(message: Message, state: FSMContext):
-    try:
-        amount = float(message.text)
-        await state.update_data(amount=amount)
-        await message.answer("Оберіть валюту, з якої конвертувати:", reply_markup=currency_keyboard())
-        await state.set_state(ConversionState.from_currency)
-    except ValueError:
-        await message.answer("Будь ласка, введіть правильну числову суму.")
 
-@dp.message(ConversionState.from_currency)
-async def process_from_currency(message: Message, state: FSMContext):
-    rates = get_exchange_rates()
-    if message.text in rates:
-        await state.update_data(from_currency=message.text)
-        await message.answer("Оберіть валюту, в яку конвертувати:", reply_markup=currency_keyboard())
-        await state.set_state(ConversionState.to_currency)
-    else:
-        await message.answer("Будь ласка, оберіть доступну валюту.")
+@currency_exchange_router.message_handler(state=Form.waiting_for_currency_from)
+async def process_currency_from(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['currency_from'] = message.text
+    await message.answer("Введіть кількість грошей:")
+    await Form.waiting_for_amount.set()
 
-@dp.message(ConversionState.to_currency)
-async def process_to_currency(message: Message, state: FSMContext):
-    rates = get_exchange_rates()
-    if message.text in rates:
-        data = await state.get_data()
-        from_currency = data["from_currency"]
-        amount = data["amount"]
-        to_currency = message.text
 
-        converted_amount = (amount / rates[from_currency]) * rates[to_currency]
-        result = f"{amount} {from_currency} = {converted_amount:.2f} {to_currency}"
-        await message.answer(result, reply_markup=types.ReplyKeyboardRemove())
-        
-        await state.clear()
-    else:
-        await message.answer("Будь ласка, оберіть доступну валюту.")
+@currency_exchange_router.message_handler(state=Form.waiting_for_amount)
+async def process_amount(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['amount'] = message.text
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    currencies = ["USD", "EUR", "UAH"]  
+    for currency in currencies:
+        keyboard.add(currency)
+    await message.answer("Оберіть валюту, в яку будете переводити гроші:", reply_markup=keyboard)
+    await Form.waiting_for_currency_to.set()
+
+
+@currency_exchange_router.message_handler(state=Form.waiting_for_currency_to)
+async def process_currency_to(message: types.Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['currency_to'] = message.text
+        currency_from = data['currency_from']
+        amount = data['amount']
+        currency_to = data['currency_to']
+    await message.answer(f"Ви обрали перевести {amount} {currency_from} в {currency_to}.")
+    await state.finish()
+
+
+@currency_exchange_router.message_handler(commands=['exchange'])
+async def cmd_exchange(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    currencies = ["USD", "EUR", "UAH"]
+    for currency in currencies:
+        keyboard.add(currency)
+    await message.answer("Оберіть валюту, з якої будете переводити гроші:", reply_markup=keyboard)
+    user_data[message.from_user.id] = {'step': 'currency_from'}
+
+@currency_exchange_router.message_handler(lambda message: user_data.get(message.from_user.id, {}).get('step') == 'currency_from')
+async def process_currency_from(message: types.Message):
+    user_data[message.from_user.id]['currency_from'] = message.text
+    await message.answer("Введіть кількість грошей:")
+    user_data[message.from_user.id]['step'] = 'amount'
+
+@currency_exchange_router.message_handler(lambda message: user_data.get(message.from_user.id, {}).get('step') == 'amount')
+async def process_amount(message: types.Message):
+    user_data[message.from_user.id]['amount'] = message.text
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    currencies = ["USD", "EUR", "UAH"]
+    for currency in currencies:
+        keyboard.add(currency)
+    await message.answer("Оберіть валюту, в яку будете переводити гроші:", reply_markup=keyboard)
+    user_data[message.from_user.id]['step'] = 'currency_to'
+
+@currency_exchange_router.message_handler(lambda message: user_data.get(message.from_user.id, {}).get('step') == 'currency_to')
+async def process_currency_to(message: types.Message):
+    user_data[message.from_user.id]['currency_to'] = message.text
+    currency_from = user_data[message.from_user.id]['currency_from']
+    amount = user_data[message.from_user.id]['amount']
+    currency_to = user_data[message.from_user.id]['currency_to']
+    user_id = message.from_user.id
+    
+    transaction_data = {
+        'user_id': user_id,
+        'currency_from': currency_from,
+        'amount': amount,
+        'currency_to': currency_to,
+        'timestamp': datetime.now().isoformat()
+    }
+    
+    filename = f'transactions/transaction_{user_id}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+    with open(filename, 'w') as json_file:
+        json.dump(transaction_data, json_file, indent=4)
+    
+    await message.answer(f"Ви обрали перевести {amount} {currency_from} в {currency_to}. Транзакцію збережено.")
+    del user_data[message.from_user.id]
+

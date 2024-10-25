@@ -1,12 +1,14 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram import Router
+
+buttons_router = Router()
 
 def main_menu_keyboard():
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(KeyboardButton("Прибуток"), KeyboardButton("Витрати"))
-    keyboard.add(KeyboardButton("Мій баланс"), KeyboardButton("Що таке wallet-bot?"))
-    return keyboard
-
-def transaction_menu_keyboard():
-    keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(KeyboardButton("Історія транзакцій"))
-    return keyboard
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="USD")],
+            [KeyboardButton(text="EUR")],
+            [KeyboardButton(text="GBP")]
+        ],
+        resize_keyboard=True
+    )

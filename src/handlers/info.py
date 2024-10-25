@@ -1,13 +1,13 @@
 from aiogram import Router, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
-from ..service.data_management import data_manager
+from src.service.data_management import data_manager
 from ..keyboards.buttons import main_menu_keyboard
 
 
 info_router = Router()
 
-@info_router.message(CommandStart(deep_link=True))
+@info_router.message(CommandStart())
 async def commandstart(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
@@ -15,13 +15,13 @@ async def commandstart(message: Message):
         "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
         "з описом того на шо була транзакція (за вашим бажанням). "
         "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
-        "Але ця функція ще розробляється :'("
+        "Але ця функція ще розроб`ляється :'("
         "Якщо потрібна допомога впишіть команду '/help'"
     )
     await message.answer(welcome_message, reply_markup=main_menu_keyboard()) 
 
 
-@info_router.message(F.text == "balance")
+@info_router.message(F.text == "/balance")
 async def show_balance(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
