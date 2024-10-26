@@ -9,10 +9,8 @@ from aiogram.dispatcher import State
 
 currency_exchange_router = Router()
 
-
-currency_exchange_router = Router()
-
-class Form(StatesGroup):
+user_data = {}
+class Form():
     waiting_for_currency_from = State()
     waiting_for_amount = State()
     waiting_for_currency_to = State()
