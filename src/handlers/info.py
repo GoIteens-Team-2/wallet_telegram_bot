@@ -7,6 +7,7 @@ from ..keyboards.buttons import main_menu_keyboard
 
 info_router = Router()
 
+
 @info_router.message(CommandStart())
 async def commandstart(message: Message):
     user_id = message.from_user.id
@@ -18,14 +19,16 @@ async def commandstart(message: Message):
         "Але ця функція ще розроб`ляється :'("
         "Якщо потрібна допомога впишіть команду '/help'"
     )
-    await message.answer(welcome_message, reply_markup=main_menu_keyboard()) 
+    await message.answer(welcome_message, reply_markup=main_menu_keyboard())
 
 
 @info_router.message(F.text == "/balance")
 async def show_balance(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
-    await message.answer(f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн.")
+    await message.answer(
+        f"Ваш поточний баланс: {data_manager.user_data[user_id]['balance']} грн."
+    )
 
 
 @info_router.message(F.text == "/help")
