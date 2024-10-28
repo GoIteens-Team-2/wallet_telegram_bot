@@ -80,7 +80,7 @@ user_input_dates = {}
 async def ask_for_date(message: Message):
     await message.answer("Введіть дату у форматі DD-MM, з якої ви хочете побачити транзакції:")
     user_id = message.from_user.id
-    user_input_dates[user_id] = None  # Ініціалізуємо значення
+    user_input_dates[user_id] = None
 
 @history_router.message()
 async def transaction_from_date(message: Message):
@@ -110,7 +110,7 @@ async def transaction_from_date(message: Message):
 
         if not filtered_transactions:
             await message.answer("Немає транзакцій з цієї дати.")
-            user_input_dates[user_id] = None  # Скидаємо дату
+            user_input_dates[user_id] = None
             return
 
 
