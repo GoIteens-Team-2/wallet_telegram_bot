@@ -36,7 +36,9 @@ async def show_balance(message: Message):
         f"Ось доступні команди:\n"
         f"/income {{сума}} {{опис}} - Додати дохід\n"
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
-        f"/history - Переглянути історію транзакцій\n"
+        f"/historyIncomes - переглянути ВСЮ історію доходів\n"
+        f"/historyExpenses - переглянути ВСЮ історію витрат\n"
+        f"/historyFromDate - переглянути історію транзакцій які були виконані у певну дату\n"
         f"/balance - переглянути свій баланс"
     )
     await message.answer(help_message)
