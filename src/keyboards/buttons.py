@@ -10,7 +10,8 @@ def main_menu_keyboard():
             [KeyboardButton(text="EUR")],
             [KeyboardButton(text="GBP")], 
             [KeyboardButton(text="Історії транзакцій")],
-            [KeyboardButton(text="Графік валют")], 
+            [KeyboardButton(text="Графік валют")],
+            [KeyboardButton(text="Старт")], 
         ],
         resize_keyboard=True
     )
