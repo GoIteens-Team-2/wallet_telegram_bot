@@ -111,7 +111,6 @@ async def transaction_from_date(message: Message):
         if not filtered_transactions:
             await message.answer("Немає транзакцій з цієї дати.")
             user_input_dates[user_id] = None
-            return
 
 
         transactions_history = "\n".join([
