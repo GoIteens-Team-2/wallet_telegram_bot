@@ -8,8 +8,9 @@ def main_menu_keyboard():
         keyboard=[
             [KeyboardButton(text="USD")],
             [KeyboardButton(text="EUR")],
-            [KeyboardButton(text="GBP")]
+            [KeyboardButton(text="GBP")], 
             [KeyboardButton(text="Історії транзакцій")],
+            KeyboardButton(text="Графік валют")], 
         ],
         resize_keyboard=True
     )
