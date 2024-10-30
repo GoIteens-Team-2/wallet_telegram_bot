@@ -115,7 +115,6 @@ async def transaction_from_date(message: Message):
         if not filtered_transactions:
             await message.answer("Немає транзакцій з цієї дати.")
             user_input_dates[user_id] = None
-            return
 
 
         transactions_history = "\n".join([
@@ -126,7 +125,6 @@ async def transaction_from_date(message: Message):
         await message.answer(f"Транзакції з {input_date}:\n{transactions_history}")
 
         user_input_dates[user_id] = None
-
 
 
 @history_router.message(Command("monthlyTransactionsGraph"))

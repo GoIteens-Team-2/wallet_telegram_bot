@@ -8,7 +8,26 @@ def main_menu_keyboard():
         keyboard=[
             [KeyboardButton(text="USD")],
             [KeyboardButton(text="EUR")],
-            [KeyboardButton(text="GBP")]
+            [KeyboardButton(text="GBP")], 
+            [KeyboardButton(text="Історії транзакцій")],
+            [KeyboardButton(text="Графік валют")],
+            [KeyboardButton(text="Старт")], 
         ],
         resize_keyboard=True
     )
+
+def transaction_history_keyboard():
+    """Створює клавіатуру з командами для перегляду історії."""
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="/historyExpenses - Історія останньої витрати")],
+            [KeyboardButton(text="/historyIncomes - Історія ваших доходів")],
+            [KeyboardButton(text="/historyFromDate - Історія витрат конкретного числа")],
+            [KeyboardButton(text="Головне меню")]  # Кнопка для повернення до головного меню
+        ],
+        resize_keyboard=True
+    )
+def transaction_keyboard():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="
