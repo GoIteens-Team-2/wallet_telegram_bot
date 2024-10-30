@@ -1,4 +1,4 @@
 aiogram
 python-dotenv
-python-telegram-bot matplotlib requests
 matplotlib
+requests
