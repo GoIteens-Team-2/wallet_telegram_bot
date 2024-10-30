@@ -1,10 +1,15 @@
-from aiogram import Router, F
+import os
+from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 import json
 from datetime import datetime
+import matplotlib as plt
+from io import BytesIO
+import calendar
 
 from ..service.data_management import data_manager
+from ..service.monthlyTransactions import load_user_transactions, generate_monthly_transaction_graph, group_transactions_by_month
 
 history_router = Router()
 
@@ -73,7 +78,6 @@ async def transaction_history(message: Message):
 
 user_data = {}
 
-# Словник для збереження дати для кожного користувача
 user_input_dates = {}
 
 @history_router.message(Command("historyFromDate"))
@@ -122,3 +126,19 @@ async def transaction_from_date(message: Message):
         await message.answer(f"Транзакції з {input_date}:\n{transactions_history}")
 
         user_input_dates[user_id] = None
+
+
+
+@history_router.message(Command("monthlyTransactionsGraph"))
+async def send_transaction_history(message: Message):
+    user_id = message.from_user.id
+    transactions = load_user_transactions(user_id)
+    
+    if not transactions:
+        await message.answer("У вас немає транзакцій за цей місяць")
+        return
+    
+    monthly_income, monthly_expenses = group_transactions_by_month(transactions)
+    
+    graph = generate_monthly_transaction_graph(monthly_income, monthly_expenses)
+    await message.answer_photo(graph, caption="Графік транзакцій помісячно")
