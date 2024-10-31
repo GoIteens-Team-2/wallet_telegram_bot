@@ -7,7 +7,7 @@ from src.service.data_management import data_manager
 info_router = Router()
 
 
-@info_router.message(CommandStart())
+@info_router.message(CommandStart(deep_link=True))
 async def commandstart(message: Message):
     print("Test start")
     user_id = message.from_user.id

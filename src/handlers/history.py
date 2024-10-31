@@ -4,10 +4,10 @@ from aiogram.filters import Command
 from aiogram.types import Message
 import json
 from datetime import datetime
-import matplotlib as plt
-from io import BytesIO
-import calendar
+from aiogram.fsm.context import FSMContext
 
+
+from ..service.MessageState import MessageState
 from ..service.data_management import data_manager
 from ..service.monthlyTransactions import (
     load_user_transactions,
@@ -82,58 +82,64 @@ async def transaction_history(message: Message):
 
 
 @history_router.message(Command("historyFromDate"))
-async def ask_for_date(message: Message):
+async def ask_for_date(message: Message, state: FSMContext):
+    await state.set_state(MessageState.quest_1)
     await message.answer(
         "Введіть дату у форматі DD-MM, з якої ви хочете побачити транзакції:"
     )
+
+
+@history_router.message(MessageState.quest_1)
+async def transaction_from_date(message: Message, state: FSMContext):
+    await state.update_data(quest_2=message.text)
+    await state.set_state(MessageState.quest_2)
+
+
     user_id = message.from_user.id
     user_input_dates[user_id] = None
 
 
-# @history_router.message()
-# async def transaction_from_date(message: Message):
-#     user_id = message.from_user.id
+    if user_id in user_input_dates and user_input_dates[user_id] is None:
+        input_date = message.text
+        user_input_dates[user_id] = input_date
 
-#     if user_id in user_input_dates and user_input_dates[user_id] is None:
-#         input_date = message.text
-#         user_input_dates[user_id] = input_date
+        try:
+            filter_date = datetime.strptime(input_date, "%d-%m")
+        except ValueError:
+            await message.answer(
+                "Неправильний формат дати. Будь ласка, введіть у форматі DD-MM."
+            )
+            user_input_dates[user_id] = None
+            return
 
-#         try:
-#             filter_date = datetime.strptime(input_date, "%d-%m")
-#         except ValueError:
-#             await message.answer(
-#                 "Неправильний формат дати. Будь ласка, введіть у форматі DD-MM."
-#             )
-#             user_input_dates[user_id] = None
-#             return
+        transactions = user_data.get(str(user_id), {}).get("transactions", [])
 
-#         transactions = user_data.get(str(user_id), {}).get("transactions", [])
+        filtered_transactions = [
+            t
+            for t in transactions
+            if datetime.strptime(t["date"], "%d-%m") >= filter_date
+        ]
 
-#         filtered_transactions = [
-#             t
-#             for t in transactions
-#             if datetime.strptime(t["date"], "%d-%m") >= filter_date
-#         ]
+        if not filtered_transactions:
+            await message.answer("Немає транзакцій з цієї дати.")
+            user_input_dates[user_id] = None
+            return
 
-#         if not filtered_transactions:
-#             await message.answer("Немає транзакцій з цієї дати.")
-#             user_input_dates[user_id] = None
+        transactions_history = "\n".join(
+            [
+                f"{idx+1}. {t['description']} на {t['amount']} грн (Дата: {t['date']})"
+                for idx, t in enumerate(filtered_transactions)
+            ]
+        )
 
-#         transactions_history = "\n".join(
-#             [
-#                 f"{idx+1}. {t['description']} на {t['amount']} грн (Дата: {t['date']})"
-#                 for idx, t in enumerate(filtered_transactions)
-#             ]
-#         )
+        await message.answer(f"Транзакції з {input_date}:\n{transactions_history}")
 
-#         await message.answer(f"Транзакції з {input_date}:\n{transactions_history}")
+        user_input_dates[user_id] = None
 
-#         user_input_dates[user_id] = None
 
 
 @history_router.message(Command("monthlyTransactionsGraph"))
 async def send_transaction_history(message: Message):
-    print("OLEH TEST")
     user_id = message.from_user.id
     transactions = load_user_transactions(user_id)
 
@@ -145,3 +151,4 @@ async def send_transaction_history(message: Message):
 
     graph = generate_monthly_transaction_graph(monthly_income, monthly_expenses)
     await message.answer_photo(graph, caption="Графік транзакцій помісячно")
+
