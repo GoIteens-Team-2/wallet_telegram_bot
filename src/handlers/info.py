@@ -43,5 +43,9 @@ async def show_balance(message: Message):
         f"/historyExpenses - переглянути ВСЮ історію витрат\n"
         f"/historyFromDate - переглянути історію транзакцій які були виконані у певну дату\n"
         f"/balance - переглянути свій баланс"
+        f"/history - поглиблина історія транзакцій"
     )
     await message.answer(help_message)
+
+@info_router.message(Command("history"))
+async def 
