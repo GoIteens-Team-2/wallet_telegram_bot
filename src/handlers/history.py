@@ -31,7 +31,7 @@ async def transaction_history(message: Message):
 
     for transaction in transactions:
         if "date" not in transaction:
-            transaction["date"] = datetime.now().strftime("%m-%d")
+            transaction["date"] = datetime.now().strftime("%d-%m-%y")
 
     data_manager.save_user_data(user_id)
     with open(f"{user_id}_transactions.json", "w", encoding="utf-8") as json_file:
@@ -60,7 +60,7 @@ async def transaction_history(message: Message):
 
     for transaction in transactions:
         if "date" not in transaction:
-            transaction["date"] = datetime.strftime("%m-%d")
+            transaction["date"] = datetime.strftime("%d-%m-%y")
 
     data_manager.save_user_data(user_id)
     with open(f"{user_id}_transactions.json", "w", encoding="utf-8") as json_file:
@@ -85,7 +85,7 @@ async def transaction_history(message: Message):
 async def ask_for_date(message: Message, state: FSMContext):
     await state.set_state(MessageState.quest_1)
     await message.answer(
-        "Введіть дату у форматі DD-MM, з якої ви хочете побачити транзакції:"
+        "Введіть дату у форматі DD-MM-YY, з якої ви хочете побачити транзакції:"
     )
 
 
@@ -104,10 +104,10 @@ async def transaction_from_date(message: Message, state: FSMContext):
         user_input_dates[user_id] = input_date
 
         try:
-            filter_date = datetime.strptime(input_date, "%d-%m")
+            filter_date = datetime.strptime(input_date, "%d-%m-%y")
         except ValueError:
             await message.answer(
-                "Неправильний формат дати. Будь ласка, введіть у форматі DD-MM."
+                "Неправильний формат дати. Будь ласка, введіть у форматі DD-MM-YY"
             )
             user_input_dates[user_id] = None
             return
@@ -117,7 +117,7 @@ async def transaction_from_date(message: Message, state: FSMContext):
         filtered_transactions = [
             t
             for t in transactions
-            if datetime.strptime(t["date"], "%d-%m") >= filter_date
+            if datetime.strptime(t["date"], "%d-%m-%y") >= filter_date
         ]
 
         if not filtered_transactions:
@@ -127,7 +127,7 @@ async def transaction_from_date(message: Message, state: FSMContext):
 
         transactions_history = "\n".join(
             [
-                f"{idx+1}. {t['description']} на {t['amount']} грн (Дата: {t['date']})"
+                f"{idx+1}. {t['description']} на {t['amount']} грн)"
                 for idx, t in enumerate(filtered_transactions)
             ]
         )
@@ -144,7 +144,7 @@ async def send_transaction_history(message: Message):
     transactions = load_user_transactions(user_id)
 
     if not transactions:
-        await message.answer("У вас немає транзакцій за цей місяць")
+        await message.answer("У вас немає транзакцій")
         return
 
     monthly_income, monthly_expenses = group_transactions_by_month(transactions)
