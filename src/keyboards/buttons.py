@@ -3,12 +3,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def main_menu_keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="USD")],
-            [KeyboardButton(text="EUR")],
-            [KeyboardButton(text="GBP")],
-            [KeyboardButton(text="Історії транзакцій")],
-            [KeyboardButton(text="Графік валют")],
-            [KeyboardButton(text="Старт")],
+            
         ],
         resize_keyboard=True,
         one_time_keyboard=True
