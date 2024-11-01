@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
 from aiogram.utils.keyboard import InlineKeyboardButton
 from src.service.data_management import data_manager
@@ -41,9 +41,12 @@ async def show_help(message: Message):
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
         f"/historyIncomes - переглянути ВСЮ історію доходів\n"
         f"/historyExpenses - переглянути ВСЮ історію витрат\n"
+        f"/historyFromTo - користувач пише дві дати і бот видає всі транзакції які були виконані в цьому періоді\n"
+        f"/historyPlot - графік надходжень/витрат помісячно\n"
+        f"/historyPlotDay - графік надходжень/витрат поденно\n"
         f"/historyFromDate - переглянути історію транзакцій які були виконані у певну дату\n"
-        f"/balance - переглянути свій баланс"
-        f"/history - поглиблина історія транзакцій"
+        f"/balance - переглянути свій баланс\n"
+        f"/history - поглиблина історія транзакцій\n"
     )
     await message.answer(help_message)
 
@@ -53,7 +56,7 @@ async def command_history(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     history_message = "Команди ваших Транзакцій:"
-
+історії транзакцій
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
         [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
@@ -61,4 +64,4 @@ async def command_history(message: Message):
         [InlineKeyboardButton(text="Баланс", callback_data="balance")]
     ])
     
-    await message.answer(history_message, reply_markup=keyboard)
+#     await message.answer(history_message, reply_markup=keyboard)
