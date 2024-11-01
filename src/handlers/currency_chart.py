@@ -25,4 +25,4 @@ async def handle_currency_choice(callback_query: CallbackQuery):
     rates = get_currency_rates(currency)
     chart_buf = create_chart(rates, currency)
     photo = BufferedInputFile(chart_buf.read(), filename="chat.png")
-    await message.answer_photo(photo=photo)
+    await allback_query.message.answer_photo(photo=photo)
