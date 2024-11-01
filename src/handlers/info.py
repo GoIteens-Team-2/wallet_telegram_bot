@@ -41,24 +41,29 @@ async def show_help(message: Message):
         f"/expense {{сума}} {{опис}} - Додати витрату\n"
         f"/historyIncomes - переглянути ВСЮ історію доходів\n"
         f"/historyExpenses - переглянути ВСЮ історію витрат\n"
+        f"/historyFromTo - користувач пише дві дати і бот видає всі транзакції які були виконані в цьому періоді\n"
+        f"/historyPlot - графік надходжень/витрат помісячно\n"
+        f"/historyPlotDay - графік надходжень/витрат поденно\n"
         f"/historyFromDate - переглянути історію транзакцій які були виконані у певну дату\n"
-        f"/balance - переглянути свій баланс"
-        f"/history - поглиблина історія транзакцій"
+        f"/balance - переглянути свій баланс\n"
+        f"/history - поглиблина історія транзакцій\n"
     )
     await message.answer(help_message)
 
+    #f"/ - \n"
 
 
-@info_router.message(Command("history"))
-async def command_history(message: Message):
-    user_id = message.from_user.id
-    data_manager.load_user_data(user_id)
-    history_message = "Команди ваших Транзакцій:"
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
-        [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
-        [InlineKeyboardButton(text="Історія за датою", callback_data="historyFromDate")],
-        [InlineKeyboardButton(text="Баланс", callback_data="balance")]
-    ])
+
+# @info_router.message(Command("history"))
+# async def command_history(message: Message):
+#     user_id = message.from_user.id
+#     data_manager.load_user_data(user_id)
+#     history_message = "Команди ваших Транзакцій:"
+#     keyboard = InlineKeyboardMarkup(inline_keyboard=[
+#         [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
+#         [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
+#         [InlineKeyboardButton(text="Історія за датою", callback_data="historyFromDate")],
+#         [InlineKeyboardButton(text="Баланс", callback_data="balance")]
+#     ])
     
-    await message.answer(history_message, reply_markup=keyboard)
+#     await message.answer(history_message, reply_markup=keyboard)

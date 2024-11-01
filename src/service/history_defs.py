@@ -71,7 +71,7 @@ def group_transactions_by_day(transactions):
     daily_expenses = {}
 
     for transaction in transactions:
-        date = datetime.strptime(transaction['date'], "%d-%m")
+        date = datetime.strptime(transaction["date"], "%d-%m-%y")
         day = date.strftime("%d-%m-%y")
 
         if transaction['type'] == 'income':

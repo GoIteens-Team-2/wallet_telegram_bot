@@ -9,4 +9,3 @@ class Form(StatesGroup):
     waiting_for_currency_from = State()
     waiting_for_amount = State()
     waiting_for_currency_to = State()
-

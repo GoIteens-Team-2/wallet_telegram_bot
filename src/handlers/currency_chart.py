@@ -1,20 +1,20 @@
 from aiogram import Router
-from aiogram.types import Message, CallbackQuery, BufferedInputFile, InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters import Command
-from aiogram.utils import InlineKeyboardBuilder, InlineKeyboardButton
+# from aiogram.types import Message, CallbackQuery, BufferedInputFile, InlineKeyboardMarkup, InlineKeyboardButton
+# from aiogram.filters import Command
+# from aiogram.utils import InlineKeyboardBuilder, InlineKeyboardButton
 
-from ..service.charts_defs import get_currency_rates, create_chart
+# from ..service.charts_defs import get_currency_rates, create_chart
 
 currency_chart_router = Router()
 
-def get_currency_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Гривня", callback_data="currency:UAH")],
-        [InlineKeyboardButton(text="Польська злота", callback_data="currency:PLN")],
-        [InlineKeyboardButton(text="Американський долар", callback_data="currency:USD")],
-        [InlineKeyboardButton(text="Євро", callback_data="currency:EUR")]
-    ])
-    return keyboard
+# def get_currency_keyboard():
+#     keyboard = InlineKeyboardMarkup(inline_keyboard=[
+#         [InlineKeyboardButton(text="Гривня", callback_data="currency:UAH")],
+#         [InlineKeyboardButton(text="Польська злота", callback_data="currency:PLN")],
+#         [InlineKeyboardButton(text="Американський долар", callback_data="currency:USD")],
+#         [InlineKeyboardButton(text="Євро", callback_data="currency:EUR")]
+#     ])
+#     return keyboard
 
 # @currency_chart_router.message(Command("currencyChart"))
 # async def show_balance(message: Message):
