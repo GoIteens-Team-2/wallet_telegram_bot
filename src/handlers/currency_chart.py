@@ -6,16 +6,6 @@ from ..service.charts_defs import get_currency_rates, create_chart
 
 currency_chart_router = Router()
 
-def get_currency_keyboard():
-    keyboard = InlineKeyboardBuilder()
-    keyboard.row(
-        InlineKeyboardButton(text="UAH", callback_data="currency:UAH"),
-        InlineKeyboardButton(text="USD", callback_data="currency:USD"),
-        InlineKeyboardButton(text="PLN", callback_data="currency:PLN"),
-        InlineKeyboardButton(text="EUR", callback_data="currency:EUR"),
-    )
-    return keyboard.as_markup()
-
 @currency_chart_router.message(Command("currencyChart"))
 async def show_balance(message: Message):
     await message.answer("Виберіть валюту:", reply_markup=get_currency_keyboard())
