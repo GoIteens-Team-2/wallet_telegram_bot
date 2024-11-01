@@ -51,17 +51,17 @@ async def show_help(message: Message):
     await message.answer(help_message)
 
 
-@info_router.message(Command("history"))
-async def command_history(message: Message):
-    user_id = message.from_user.id
-    data_manager.load_user_data(user_id)
-    history_message = "Команди ваших Транзакцій:"
-історії транзакцій
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
-        [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
-        [InlineKeyboardButton(text="Історія за датою", callback_data="historyFromDate")],
-        [InlineKeyboardButton(text="Баланс", callback_data="balance")]
-    ])
+# @info_router.message(Command("history"))
+# async def command_history(message: Message):
+#     user_id = message.from_user.id
+#     data_manager.load_user_data(user_id)
+#     history_message = "Команди ваших Транзакцій:"
+
+#     keyboard = InlineKeyboardMarkup(inline_keyboard=[
+#         [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
+#         [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
+#         [InlineKeyboardButton(text="Історія за датою", callback_data="historyFromDate")],
+#         [InlineKeyboardButton(text="Баланс", callback_data="balance")]
+#     ])
     
-#     await message.answer(history_message, reply_markup=keyboard)
+# #     await message.answer(history_message, reply_markup=keyboard)
