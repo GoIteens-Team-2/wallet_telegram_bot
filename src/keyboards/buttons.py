@@ -1,14 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-def main_menu_keyboard():
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True
-    )
-
 def transaction_history_keyboard():
     """Створює клавіатуру з командами для перегляду історії."""
     return ReplyKeyboardMarkup(
