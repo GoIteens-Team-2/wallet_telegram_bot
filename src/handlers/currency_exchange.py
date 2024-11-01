@@ -1,9 +1,4 @@
-import os
-import json
-from aiogram import types, Router
-from datetime import datetime
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
+from aiogram import Router
 from aiogram.fsm.state import StatesGroup, State
 
 currency_exchange_router = Router()
