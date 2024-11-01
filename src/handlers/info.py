@@ -1,7 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, Command
-from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardButton
 from src.service.data_management import data_manager
 
 
@@ -53,7 +53,7 @@ async def command_history(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     history_message = "Команди ваших Транзакцій:"
-історії транзакцій
+
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
         [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
