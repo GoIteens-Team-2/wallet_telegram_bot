@@ -35,7 +35,7 @@ async def show_transaction_history_options(message: Message):
         "Історія конкретноі дати": "history_from_date",
     }
     await message.answer(
-        "SELECT COMMAND FOR HISTORY",
+        "°ОБЕРІТЬ КОМАНДИ ДЛЯ ПЕРЕГЛЯДУ°",
         reply_markup=get_inline_keyboard(
             btns=buttons,
             sizes=(1,) * len(buttons),
@@ -168,7 +168,9 @@ async def transaction_from_date(message: Message, state: FSMContext):
 
 @history_router.message(Command("historyFromTo"))
 @history_router.callback_query(F.data == "history_from_to")
-async def ask_first_date(event:message: Message, state: FSMContext):
+async def ask_first_date(event: Message | CallbackQuery, state: FSMContext):
+    if isinstance(event, CallbackQuery):
+        event = event.message
     await state.set_state(MessageState.quest_3)
 
     await message.answer("Введіть першу дату у форматі dd-mm-yyyy:")
@@ -232,8 +234,11 @@ async def handle_second_date(message: Message, state: FSMContext):
 
 
 @history_router.message(Command("historyPlot"))
-async def send_transaction_history(message: Message):
+@history_router.callback_query(F.data == "history_plot")
+async def send_transaction_history(event: Message | CallbackQuery ):
     user_id = message.from_user.id
+    if isinstance(event, CallbackQuery):
+        event = event.message
     transactions = load_user_transactions(user_id)
 
     if not transactions:
@@ -256,8 +261,11 @@ async def send_transaction_history(message: Message):
 
 
 @history_router.message(Command("historyPlotDay"))
+@history_router.callback_query(F.data == "history_plot_day")
 async def send_transaction_history(message: Message):
     user_id = message.from_user.id
+    if isinstance(event, CallbackQuery):
+        event = event.message
     transactions = load_user_transactions(user_id)
 
     if not transactions:
