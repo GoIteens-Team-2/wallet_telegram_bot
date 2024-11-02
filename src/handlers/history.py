@@ -10,11 +10,10 @@ from ..service.MessageState import MessageState
 from ..service.data_management import data_manager
 from ..service.history_defs import (
     load_user_transactions,
-    generate_monthly_transaction_graph,
     group_transactions_by_month,
     filter_transactions_by_date,
     group_transactions_by_day,
-    generate_daily_transaction_graph
+    generate_transaction_buffer
 )
 
 history_router = Router()
@@ -26,7 +25,7 @@ user_input_dates = {}
 
 
 @history_router.message(Command("historyExpenses"))
-async def transaction_history(message: Message):
+async def transaction_history_expenses(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     transactions = data_manager.user_data[user_id].get("transactions", [])
@@ -55,7 +54,7 @@ async def transaction_history(message: Message):
 
 
 @history_router.message(Command("historyIncomes"))
-async def transaction_history(message: Message):
+async def transaction_history_incomes(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     transactions = data_manager.user_data[user_id].get("transactions", [])
@@ -201,7 +200,7 @@ async def send_transaction_history(message: Message):
 
     monthly_income, monthly_expenses = group_transactions_by_month(transactions["transactions"])
 
-    graph = generate_monthly_transaction_graph(monthly_income, monthly_expenses)
+    graph = generate_transaction_buffer(monthly_income, monthly_expenses, "monthly")
     graph_image = BufferedInputFile(graph.read(), "plot.png")
     await message.answer_photo(photo=graph_image, caption="Графік транзакцій помісячно")
 
@@ -220,6 +219,6 @@ async def send_transaction_history(message: Message):
     daily_income, daily_expenses = group_transactions_by_day(transactions["transactions"])
     
     print("group_transactions_by_day")
-    graph = generate_daily_transaction_graph(daily_income, daily_expenses)
+    graph = generate_transaction_buffer(daily_income, daily_expenses, "daily")
     graph_image = BufferedInputFile(graph.read(), "plot.png")
     await message.answer_photo(photo=graph_image, caption="Графік ваших транзакцій(поденно)")

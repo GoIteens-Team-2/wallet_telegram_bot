@@ -1,25 +1,29 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
-from aiogram.utils.keyboard import InlineKeyboardButton
 from src.service.data_management import data_manager
+from keyboards import transaction_history_keyboard
 
 
 info_router = Router()
 
-
 @info_router.message(CommandStart(deep_link=True))
-async def commandstart(message: Message):
+async def command_start(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     welcome_message = (
-        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції уходить транзакції та конвертація валют, "
-        "з описом того на шо була транзакція (за вашим бажанням). "
-        "Однією з особливостей цього бота, буде конвертація валют у криптовалюту, Єфір, Біткоїн тощо. "
-        "Але ця функція ще розроб`ляється :'("
-        "Якщо потрібна допомога впишіть команду '/help'"
+        "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції входять транзакції та конвертація валют "
+        "з описом того, на що була транзакція (за вашим бажанням). "
+        "Однією з особливостей цього бота буде конвертація валют у криптовалюту — Ефір, Біткоїн тощо. "
+        "Але ця функція ще розробляється :(\n\n"
+        "Якщо потрібна допомога, впишіть команду '/help'."
     )
     await message.answer(welcome_message)
+    await message.answer(
+        "Вітаємо! Ось доступні опції:",
+        # reply_markup=transaction_history_keyboard()
+    )
+
 
 
 @info_router.message(Command("balance"))
@@ -49,19 +53,3 @@ async def show_help(message: Message):
         f"/history - поглиблина історія транзакцій\n"
     )
     await message.answer(help_message)
-
-
-# @info_router.message(Command("history"))
-# async def command_history(message: Message):
-#     user_id = message.from_user.id
-#     data_manager.load_user_data(user_id)
-#     history_message = "Команди ваших Транзакцій:"
-
-#     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-#         [InlineKeyboardButton(text="Історія доходів", callback_data="historyIncomes")],
-#         [InlineKeyboardButton(text="Історія витрат", callback_data="historyExpenses")],
-#         [InlineKeyboardButton(text="Історія за датою", callback_data="historyFromDate")],
-#         [InlineKeyboardButton(text="Баланс", callback_data="balance")]
-#     ])
-    
-# #     await message.answer(history_message, reply_markup=keyboard)
