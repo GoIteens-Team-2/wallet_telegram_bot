@@ -33,6 +33,9 @@ async def show_transaction_history_options(message: Message):
         "Історія витрат": "history_expenses",
         "Історія доходів": "history_incomes",
         "Історія конкретноі дати": "history_from_date",
+        "Скибиди доп" : "history_from_to", 
+        "Кнопка Zради": "history_plot", 
+        "Кнопка Zради 2": "history_plot_day", 
     }
     await message.answer(
         "°ОБЕРІТЬ КОМАНДИ ДЛЯ ПЕРЕГЛЯДУ°",
@@ -262,7 +265,7 @@ async def send_transaction_history(event: Message | CallbackQuery ):
 
 @history_router.message(Command("historyPlotDay"))
 @history_router.callback_query(F.data == "history_plot_day")
-async def send_transaction_history(message: Message):
+async def send_transaction_history(event: Message | CallbackQuery):
     user_id = message.from_user.id
     if isinstance(event, CallbackQuery):
         event = event.message
