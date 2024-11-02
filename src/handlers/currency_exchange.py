@@ -45,6 +45,17 @@ async def exchange_balance(event: Message | CallbackQuery):
     )
 
 
+@currency_exchange_router.message(Command("exchange_others"))
+@currency_exchange_router.callback_query(F.data == "exchange_others")
+async def exchange_balance(event: Message | CallbackQuery):
+    if isinstance(event, CallbackQuery):
+        event = event.message
+
+    await event.answer(
+        "Більше можливостей буде в майбутньому...")
+
+
+
 @currency_exchange_router.callback_query(
     F.data.startswith("exchange_currency_balance:")
 )
