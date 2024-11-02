@@ -1,7 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 def transaction_history_keyboard():
-    """Створює клавіатуру з командами для перегляду історії."""
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="/historyExpenses - Історія останньої витрати")],
