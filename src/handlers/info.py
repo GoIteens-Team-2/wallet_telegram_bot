@@ -1,14 +1,13 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
-from aiogram.utils.keyboard import InlineKeyboardButton
 from src.service.data_management import data_manager
+from keyboards import transaction_history_keyboard
 
 
 info_router = Router()
-start_router = Router()
 
-@start_router.message(CommandStart(deep_link=True))
+@info_router.message(CommandStart(deep_link=True))
 async def command_start(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)

@@ -15,7 +15,7 @@ class DataManager:
         except FileNotFoundError:
             self.user_data[user_id] = {"balance": 0, "transactions": []}
 
-    def save_user_data(self, user_id):
+    def load_user_data(self, user_id):
         file_name = f"users_transactions/user_{user_id}_data.json"
         with open(file_name, 'w', encoding="utf-8") as file:
             json.dump(self.user_data[user_id], file, indent=4)

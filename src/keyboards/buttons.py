@@ -1,21 +1,16 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import KeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
-def transaction_history_keyboard():
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="/historyExpenses")],
-            [KeyboardButton(text="/historyIncomes")],
-            [KeyboardButton(text="/historyFromDate")],
-            [KeyboardButton(text="Головне меню")]
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=False
-    )
+def get_keyboard(
+        *btns: str,
+        placeholder: str = None,
+        sizes: tuple[int] = (2,),
+):
+    keyboard = ReplyKeyboardBuilder()
 
-async def send_keyboard_example(message):
-    kb = ReplyKeyboardMarkup(
-        keyboard=[[KeyboardButton(text="Надати контакт", request_contact=True)]],
-        resize_keyboard=True,
-        one_time_keyboard=True
+    for _, text in enumerate(btns, start=0):
+        keyboard.add(KeyboardButton(text=text))
+    
+    return keyboard.adjust(*sizes).as_markup(
+        resize_keyboard=True, input_field_placeholder=placeholder
     )
-    await message.answer("Будь ласка, надайте свій контакт:", reply_markup=kb)
