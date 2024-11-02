@@ -18,8 +18,10 @@ def group_transactions_by_month(transactions):
     monthly_income = {}
     monthly_expenses = {}
 
+    print(transactions)
     for transaction in transactions:
-        date = datetime.strptime(transaction['date'], "%d-%m")
+        print(transaction)
+        date = datetime.strptime(transaction['date'], "%d-%m-%y")
         month_year = date.strftime("%B %Y")
 
         if transaction['type'] == 'income':
@@ -82,7 +84,7 @@ def group_transactions_by_day(transactions):
     return daily_income, daily_expenses
 
 def generate_daily_transaction_graph(daily_income, daily_expenses):
-    days = sorted(set(list(daily_income.keys()) + list(daily_expenses.keys())), key=lambda x: datetime.strptime(x, "%d-%m"))
+    days = sorted(set(list(daily_income.keys()) + list(daily_expenses.keys())), key=lambda x: datetime.strptime(x, "%d-%m-%y"))
 
     income_values = [daily_income.get(day, 0) for day in days]
     expense_values = [daily_expenses.get(day, 0) for day in days]

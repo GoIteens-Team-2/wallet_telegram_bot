@@ -1,7 +1,6 @@
-import os
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, BufferedInputFile
 import json
 from datetime import datetime
 from aiogram.fsm.context import FSMContext
@@ -178,7 +177,7 @@ async def handle_second_date(message: Message, state: FSMContext):
             return
         filtered_transactions = filter_transactions_by_date(transactions, first_date, second_date)
         if filtered_transactions:
-            result = "Транзакції між {} й {}:\n".format(first_date.strftime('%d-%m'), second_date.strftime('%d-%m'))
+            result = "Транзакції між {} й {}:\n".format(first_date.strftime('%d-%m-%y'), second_date.strftime('%d-%m-%y'))
             for transaction in filtered_transactions:
                 result += f"- {transaction['date']}: {transaction['type']} {transaction['amount']} грн., {transaction['description']}\n"
             await message.answer(result)
@@ -200,10 +199,11 @@ async def send_transaction_history(message: Message):
         await message.answer("У вас немає транзакцій")
         return
 
-    monthly_income, monthly_expenses = group_transactions_by_month(transactions)
+    monthly_income, monthly_expenses = group_transactions_by_month(transactions["transactions"])
 
     graph = generate_monthly_transaction_graph(monthly_income, monthly_expenses)
-    await message.answer_photo(graph, caption="Графік транзакцій помісячно")
+    graph_image = BufferedInputFile(graph.read(), "plot.png")
+    await message.answer_photo(photo=graph_image, caption="Графік транзакцій помісячно")
 
 
 
@@ -217,7 +217,9 @@ async def send_transaction_history(message: Message):
         await message.answer("У вас немає транзакцій")
         return
     
-    daily_income, daily_expenses = group_transactions_by_day(transactions)
+    daily_income, daily_expenses = group_transactions_by_day(transactions["transactions"])
     
+    print("group_transactions_by_day")
     graph = generate_daily_transaction_graph(daily_income, daily_expenses)
-    await message.answer_photo(graph, caption="Графік ваших транзакцій(поденно)")
+    graph_image = BufferedInputFile(graph.read(), "plot.png")
+    await message.answer_photo(photo=graph_image, caption="Графік ваших транзакцій(поденно)")
