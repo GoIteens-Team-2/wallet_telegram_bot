@@ -4,7 +4,6 @@ from aiogram.types import Message
 import datetime
 
 from ..service.data_management import data_manager
-from ..buttons import transaction_history_keyboard
 
 
 transaction_router = Router()
