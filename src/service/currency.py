@@ -2,11 +2,11 @@ import requests
 import matplotlib.pyplot as plt
 import io
 import seaborn as sns
-from src.handlers.currency_chart import currencys_types
+from src.handlers.currency_chart import currencys_type
 
 
 
-def get_currency_rates(currency_type: str = currencys_types):
+def get_currency_rates(currency_type: str = currencys_type):
     response = requests.get(
         f"https://api.exchangerate-api.com/v4/latest/{currency_type}"
     )
@@ -26,7 +26,7 @@ def get_currency_rates(currency_type: str = currencys_types):
     return rates
 
 
-def create_chart(rates, currency_type: str = currencys_types):
+def create_chart(rates, currency_type: str = currencys_type):
     currencies = list(rates.keys())
     values = list(rates.values())
     

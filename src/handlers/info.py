@@ -22,7 +22,7 @@ async def command_start(message: Message):
     await message.answer(welcome_message)
     await message.answer(
         "Вітаємо! Ось доступні опції:",
-        reply_markup=transaction_history_keyboard()
+        # reply_markup=transaction_history_keyboard()
     )
 
 
