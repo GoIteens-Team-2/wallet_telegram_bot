@@ -5,6 +5,7 @@ import datetime
 
 from ..service.data_management import data_manager
 
+
 transaction_router = Router()
 
 @transaction_router.message(Command("income"))

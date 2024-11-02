@@ -62,4 +62,4 @@ async def input_amount_handler(message: types.Message, state: FSMContext):
     except ValueError:
         await message.reply("Будь ласка, введіть правильну суму.")
     finally:
-        await state.clear()  # або await state.finish(), якщо хочете завершити стан
+        await state.finish()

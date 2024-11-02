@@ -25,7 +25,7 @@ user_input_dates = {}
 
 
 @history_router.message(Command("historyExpenses"))
-async def transaction_history(message: Message):
+async def transaction_history_expenses(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     transactions = data_manager.user_data[user_id].get("transactions", [])
@@ -54,7 +54,7 @@ async def transaction_history(message: Message):
 
 
 @history_router.message(Command("historyIncomes"))
-async def transaction_history(message: Message):
+async def transaction_history_incomes(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     transactions = data_manager.user_data[user_id].get("transactions", [])
