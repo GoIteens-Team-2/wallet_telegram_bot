@@ -31,36 +31,11 @@ def group_transactions_by_month(transactions):
 
     return monthly_income, monthly_expenses
 
-def generate_monthly_transaction_graph(monthly_income, monthly_expenses):
-    months = sorted(set(list(monthly_income.keys()) + list(monthly_expenses.keys())), key=lambda x: datetime.strptime(x, "%B %Y"))
-
-    income_values = [monthly_income.get(month, 0) for month in months]
-    expense_values = [monthly_expenses.get(month, 0) for month in months]
-
-    fig, ax = plt.subplots(figsize=(10, 5))
-
-    ax.bar(months, income_values, width=0.4, label='Income', color='green', align='center')
-    ax.bar(months, expense_values, width=0.4, label='Expenses', color='red', align='edge')
-
-    ax.set_xlabel('Month')
-    ax.set_ylabel('Amount')
-    ax.set_title('Income vs Expenses by Month')
-    ax.legend()
-    plt.xticks(rotation=45, ha='right')
-
-    buffer = BytesIO()
-    plt.savefig(buffer, format='png')
-    buffer.seek(0)
-
-    plt.close(fig)
-
-    return buffer
-
 
 def filter_transactions_by_date(transactions, start_date, end_date):
     filtered_transactions = []
     for transaction in transactions:
-        transaction_date = datetime.strptime(transaction['date'], '%d-%m').date()
+        transaction_date = datetime.strptime(transaction['date'], '%d-%m-%y').date()
         if start_date <= transaction_date <= end_date:
             filtered_transactions.append(transaction)
     return filtered_transactions
@@ -83,20 +58,28 @@ def group_transactions_by_day(transactions):
 
     return daily_income, daily_expenses
 
-def generate_daily_transaction_graph(daily_income, daily_expenses):
-    days = sorted(set(list(daily_income.keys()) + list(daily_expenses.keys())), key=lambda x: datetime.strptime(x, "%d-%m-%y"))
 
-    income_values = [daily_income.get(day, 0) for day in days]
-    expense_values = [daily_expenses.get(day, 0) for day in days]
+def generate_transaction_buffer(income, expenses, type: str):
+    if type == "daily":
+        date_filter = "%d-%m-%y"
+    elif type == "monthly":
+        date_filter = "%B %Y"
+    else:
+        raise TypeError("Incorrect type")
 
-    fig, ax = plt.subplots(figsize=(12, 6))
+    dates = sorted(set(list(income.keys()) + list(expenses.keys())), key=lambda x: datetime.strptime(x, date_filter))
 
-    ax.bar(days, income_values, width=0.4, label='Income', color='green', align='center')
-    ax.bar(days, expense_values, width=0.4, label='Expenses', color='red', align='edge')
+    income_values = [income.get(date, 0) for date in dates]
+    expense_values = [expenses.get(date, 0) for date in dates]
 
-    ax.set_xlabel('Date')
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    ax.bar(dates, income_values, width=0.4, label='Income', color='green', align='center')
+    ax.bar(dates, expense_values, width=0.4, label='Expenses', color='red', align='edge')
+
+    ax.set_xlabel('Month')
     ax.set_ylabel('Amount')
-    ax.set_title('Income vs Expenses by Day')
+    ax.set_title('Income vs Expenses') # ! add title date
     ax.legend()
     plt.xticks(rotation=45, ha='right')
 
