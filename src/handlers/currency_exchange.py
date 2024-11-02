@@ -65,9 +65,5 @@ async def input_amount_handler(message: Message, state: FSMContext):
     except ValueError:
         await message.reply("Будь ласка, введіть правильну суму.")
     finally:
-<<<<<<< HEAD
         # Повернення до початкового стану, а не повне очищення стану
         await CurrencyExchangeState.__init__.set()
-=======
-        await state.finish()
->>>>>>> 50736dfa35a98addbb20305c498879c2ecba4212
