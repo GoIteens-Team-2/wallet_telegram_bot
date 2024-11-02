@@ -1,69 +1,68 @@
-from aiogram import types, Router
-from aiogram.filters import Command, StateFilter
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram import Router, F
+from aiogram.filters import Command
+from aiogram.types import Message, CallbackQuery
+
+from ..keyboards import get_inline_keyboard
+from ..service.data_management import data_manager
+from ..constants import SELECTED_CURRENCIES
+from ..service.currency import get_currency_rates
 
 currency_exchange_router = Router()
 
 
-class CurrencyExchangeState(StatesGroup):
-    main_menu = State()
-    select_currency = State()
-    input_amount = State()
-
-exchange_rates = {
-    'UAH': 1,
-    'PLN': 0.22,
-    'USD': 0.036,
-    'EUR': 0.034,
-}
-
-@currency_exchange_router.message(Command('currencyExchange'))
-async def currency_exchange(message: types.Message, state: FSMContext):
-    await CurrencyExchangeState.main_menu.set()  # Правильно встановлюємо стан main_menu
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="Конвертувати свій баланс")],
-            [KeyboardButton(text="Інші операції")]
-        ],
-        resize_keyboard=True,
-        one_time_keyboard=True
+@currency_exchange_router.message(Command("exchange"))
+async def currency_exchange(message: Message):
+    buttons = {
+        "Конвертувати свій баланс у валюту": "exchange_convert_balance",
+        "Переведення з гривні в іншу валюту": "exchange_convert_value",
+        "Інші операції": "exchange_others",
+    }
+    await message.answer(
+        "Оберіть операцію:",
+        reply_markup=get_inline_keyboard(
+            btns=buttons,
+            sizes=(1,) * len(buttons),
+        ),
     )
-    await message.reply("Оберіть операцію:\n1. Конвертувати свій баланс\n2. Інші операції", reply_markup=keyboard)
 
-@currency_exchange_router.message(StateFilter(CurrencyExchangeState.main_menu))
-async def main_menu_handler(message: Message, state: FSMContext):
-    await message.reply("1")
-    if message.text == "Конвертувати свій баланс":
-        await state.set_state(CurrencyExchangeState.select_currency)  # Встановлюємо наступний стан
-        await message.reply("У яку валюту ви хочете конвертувати? (UAH, PLN, USD, EUR)")
-    elif message.text == "Інші операції":
-        await message.reply("Ця функція ще в розробці.")
-    else:
-        await message.reply("Невірний вибір. Спробуйте ще раз.")
 
-@currency_exchange_router.message(StateFilter(CurrencyExchangeState.select_currency))
-async def select_currency_handler(message: Message, state: FSMContext):
-    if message.text.upper() in exchange_rates:
-        await state.update_data(to_currency=message.text.upper())
-        await CurrencyExchangeState.input_amount.set()
-        await message.reply("Введіть суму для конвертації:")
-    else:
-        await message.reply("Неправильна валюта. Спробуйте ще раз.")
+@currency_exchange_router.message(Command("exchange_balance"))
+@currency_exchange_router.callback_query(F.data == "exchange_convert_balance")
+async def exchange_balance(event: Message | CallbackQuery):
+    if isinstance(event, CallbackQuery):
+        event = event.message
 
-@currency_exchange_router.message(StateFilter(CurrencyExchangeState.input_amount))
-async def input_amount_handler(message: Message, state: FSMContext):
-    try:
-        amount = float(message.text)
-        data = await state.get_data()
-        to_currency = data['to_currency']
+    await event.answer(
+        "Виберіть валюту, у якій хочете дізнатися свій баланс:",
+        reply_markup=get_inline_keyboard(
+            btns={
+                currency: f"exchange_currency_balance:{currency}"
+                for currency in SELECTED_CURRENCIES
+                if currency != "UAH"
+            },
+            sizes=(len(SELECTED_CURRENCIES),),
+        ),
+    )
 
-        # Розрахунок суми після конвертації
-        converted_amount = amount * exchange_rates[to_currency] / exchange_rates['UAH']
-        await message.reply(f"{amount} UAH = {converted_amount:.2f} {to_currency}")
-    except ValueError:
-        await message.reply("Будь ласка, введіть правильну суму.")
-    finally:
-        # Повернення до початкового стану, а не повне очищення стану
-        await CurrencyExchangeState.__init__.set()
+
+@currency_exchange_router.callback_query(
+    F.data.startswith("exchange_currency_balance:")
+)
+async def get_currency_chart(callback: CallbackQuery):
+    user_id = callback.from_user.id
+
+    data_manager.load_user_data(user_id)
+    balance = data_manager.user_data[user_id]["balance"]
+
+    currency_type = callback.data.split(":")[1]
+    if currency_type not in SELECTED_CURRENCIES:
+        await callback.message.answer(
+            "Можливо вибрати лише серед наступних валют: "
+            + " ".join(i for i in SELECTED_CURRENCIES)
+        )
+        return
+
+    rates = get_currency_rates("UAH")
+
+    result = balance * rates[currency_type]
+    await callback.message.answer(f"Result = {result}")

@@ -9,7 +9,7 @@ from aiogram.fsm.context import FSMContext
 from ..states.MessageState import MessageState
 
 from ..service.data_management import data_manager
-from ..service.history_defs import (
+from ..service.history import (
     load_user_transactions,
     filter_transactions_by_date,
     group_transactions,

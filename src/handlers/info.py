@@ -1,16 +1,14 @@
 from aiogram import Router
 from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
-from src.service.data_management import data_manager
-from keyboards import transaction_history_keyboard
+from ..service.data_management import data_manager
 
 
 info_router = Router()
 
+
 @info_router.message(CommandStart(deep_link=True))
 async def command_start(message: Message):
-    user_id = message.from_user.id
-    data_manager.load_user_data(user_id)
     welcome_message = (
         "Привіт! Я wallet-bot, чи просто бот гаманець. У мої функції входять транзакції та конвертація валют "
         "з описом того, на що була транзакція (за вашим бажанням). "
@@ -19,11 +17,6 @@ async def command_start(message: Message):
         "Якщо потрібна допомога, впишіть команду '/help'."
     )
     await message.answer(welcome_message)
-    await message.answer(
-        "Вітаємо! Ось доступні опції:",
-        # reply_markup=transaction_history_keyboard()
-    )
-
 
 
 @info_router.message(Command("balance"))

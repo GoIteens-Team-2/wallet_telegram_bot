@@ -1,15 +1,13 @@
-import requests
 import io
+import requests
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from ..constants import SELECTED_CURRENCIES
+from ..constants import SELECTED_CURRENCIES, API_CURRENCY_EXCHANGE_URL
 
 
 def get_currency_rates(currency_type: str = "UAH"):
-    response = requests.get(
-        f"https://api.exchangerate-api.com/v4/latest/{currency_type}"
-    )
+    response = requests.get(f"{API_CURRENCY_EXCHANGE_URL}{currency_type}")
     data = response.json()
     rates = {
         k: v
