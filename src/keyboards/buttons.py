@@ -9,7 +9,7 @@ def transaction_history_keyboard():
             [KeyboardButton(text="Головне меню")]
         ],
         resize_keyboard=True,
-        one_time_keyboard=True
+        one_time_keyboard=False
     )
 
 async def send_keyboard_example(message):
