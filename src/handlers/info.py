@@ -7,9 +7,8 @@ from keyboards import transaction_history_keyboard
 
 
 info_router = Router()
-start_router = Router()
 
-@start_router.message(CommandStart(deep_link=True))
+@info_router.message(CommandStart(deep_link=True))
 async def command_start(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
