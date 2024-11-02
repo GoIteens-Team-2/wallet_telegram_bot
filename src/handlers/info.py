@@ -9,7 +9,7 @@ info_router = Router()
 
 
 @info_router.message(CommandStart(deep_link=True))
-async def commandstart(message: Message):
+async def command_start(message: Message):
     user_id = message.from_user.id
     data_manager.load_user_data(user_id)
     welcome_message = (
