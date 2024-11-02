@@ -2,6 +2,7 @@ import os
 import asyncio
 
 from aiogram import Bot, Dispatcher
+from aiogram.utils.deep_linking import create_start_link
 
 from dotenv import load_dotenv
 
@@ -19,10 +20,11 @@ load_dotenv()
 async def main():
     bot = Bot(token=os.getenv("TOKEN"))
     dp = Dispatcher()
-
+    link = await create_start_link(bot, "start", encode=True)
+    print(link)
     routers = [
-        history_router,
         info_router,
+        history_router,
         transaction_router,
         currency_chart_router,
         currency_exchange_router,
