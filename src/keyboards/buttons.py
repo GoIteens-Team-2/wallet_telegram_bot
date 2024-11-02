@@ -3,9 +3,9 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 def transaction_history_keyboard():
     return ReplyKeyboardMarkup(
         keyboard=[
-            [KeyboardButton(text="/historyExpenses - Історія останньої витрати")],
-            [KeyboardButton(text="/historyIncomes - Історія ваших доходів")],
-            [KeyboardButton(text="/historyFromDate - Історія витрат конкретного числа")],
+            [KeyboardButton(text="/historyExpenses")],
+            [KeyboardButton(text="/historyIncomes")],
+            [KeyboardButton(text="/historyFromDate")],
             [KeyboardButton(text="Головне меню")]
         ],
         resize_keyboard=True,
