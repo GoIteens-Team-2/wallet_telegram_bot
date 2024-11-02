@@ -30,9 +30,9 @@ user_input_dates = {}
 @history_router.message(Command("testhistory"))
 async def show_transaction_history_options(message: Message):
     buttons = {
-        "history_expenses_name": "history_expenses",
-        "history_incomes_name": "history_incomes",
-        "history_from_date": "history_from_date",
+        "Історія витрат": "history_expenses",
+        "Історія доходів": "history_incomes",
+        "Історія конкретноі дати": "history_from_date",
     }
     await message.answer(
         "SELECT COMMAND FOR HISTORY",
@@ -167,7 +167,8 @@ async def transaction_from_date(message: Message, state: FSMContext):
 
 
 @history_router.message(Command("historyFromTo"))
-async def ask_first_date(message: Message, state: FSMContext):
+@history_router.callback_query(F.data == "history_from_to")
+async def ask_first_date(event:message: Message, state: FSMContext):
     await state.set_state(MessageState.quest_3)
 
     await message.answer("Введіть першу дату у форматі dd-mm-yyyy:")
