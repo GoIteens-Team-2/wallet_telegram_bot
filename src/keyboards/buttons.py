@@ -1,6 +1,6 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
-def transaction_history_keyboard():
+ transaction_history_keyboard():
      """Створює клавіатуру з командами для перегляду історії."""
      return ReplyKeyboardMarkup(
         keyboard=[
@@ -17,7 +17,7 @@ def transaction_history_keyboard():
          one_time_keyboard=True
      )
 
- async def send_keyboard_example(message):
+ async send_keyboard_example(message):
      kb = ReplyKeyboardMarkup(
         keyboard=[[KeyboardButton(text="Надати контакт", request_contact=True)]],
        resize_keyboard=True,
