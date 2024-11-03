@@ -14,7 +14,7 @@ currency_exchange_router = Router()
 async def currency_exchange(message: Message):
     buttons = {
         "Конвертувати свій баланс у валюту": "exchange_convert_balance",
-        "Переведення з гривні в іншу валюту": "exchange_convert_value",
+        # "Переведення з гривні в іншу валюту": "exchange_convert_value",
         "Інші операції": "exchange_others",
     }
     await message.answer(
@@ -45,17 +45,6 @@ async def exchange_balance(event: Message | CallbackQuery):
     )
 
 
-@currency_exchange_router.message(Command("exchange_others"))
-@currency_exchange_router.callback_query(F.data == "exchange_others")
-async def exchange_balance(event: Message | CallbackQuery):
-    if isinstance(event, CallbackQuery):
-        event = event.message
-
-    await event.answer(
-        "Більше можливостей буде в майбутньому...")
-
-
-
 @currency_exchange_router.callback_query(
     F.data.startswith("exchange_currency_balance:")
 )
@@ -77,3 +66,12 @@ async def get_currency_chart(callback: CallbackQuery):
 
     result = balance * rates[currency_type]
     await callback.message.answer(f"Result = {result}")
+
+
+@currency_exchange_router.message(Command("exchange_others"))
+@currency_exchange_router.callback_query(F.data == "exchange_others")
+async def exchange_balance(event: Message | CallbackQuery):
+    if isinstance(event, CallbackQuery):
+        event = event.message
+
+    await event.answer("Більше можливостей буде в майбутньому...")

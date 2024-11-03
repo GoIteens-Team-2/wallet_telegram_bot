@@ -35,9 +35,9 @@ async def show_transaction_history_options(message: Message):
         "Історія витрат": "history_expenses",
         "Історія доходів": "history_incomes",
         "Історія конкретноі дати": "history_from_date",
-        "Історія транзакцій від та до" : "history_from_to", 
-        "Графік транзакцій": "history_plot", 
-        "Поденный графік транзакцій": "history_plot_day",  
+        "Історія транзакцій від та до": "history_from_to",
+        "Графік транзакцій": "history_plot",
+        "Поденный графік транзакцій": "history_plot_day",
     }
     await message.answer(
         "°ОБЕРІТЬ КОМАНДИ ДЛЯ ПЕРЕГЛЯДУ°",
@@ -62,9 +62,6 @@ async def transaction_history_expenses(event: Message | CallbackQuery):
         if "date" not in transaction:
             transaction["date"] = datetime.now().strftime("%d-%m-%y")
 
-    data_manager.save_user_data(user_id)
-    with open(f"{user_id}_transactions.json", "w", encoding="utf-8") as json_file:
-        json.dump(data_manager.user_data[user_id], json_file, indent=4)
     expenses = [t for t in transactions if t["type"] == "expense"]
     if not expenses:
         await event.answer("У вас немає витрат.")
@@ -92,10 +89,6 @@ async def transaction_history_incomes(event: Message | CallbackQuery):
     for transaction in transactions:
         if "date" not in transaction:
             transaction["date"] = datetime.strftime("%d-%m-%y")
-
-    data_manager.save_user_data(user_id)
-    with open(f"{user_id}_transactions.json", "w", encoding="utf-8") as json_file:
-        json.dump(data_manager.user_data[user_id], json_file, indent=4)
 
     incomes = [t for t in transactions if t["type"] == "income"]
     if not incomes:
@@ -240,7 +233,7 @@ async def handle_second_date(message: Message, state: FSMContext):
 
 @history_router.message(Command("history_plot_monthly"))
 @history_router.callback_query(F.data == "history_plot")
-async def send_transaction_history(event: Message | CallbackQuery ):
+async def send_transaction_history(event: Message | CallbackQuery):
     user_id = event.from_user.id
     if isinstance(event, CallbackQuery):
         event = event.message

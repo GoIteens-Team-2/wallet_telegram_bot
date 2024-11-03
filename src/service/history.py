@@ -1,11 +1,9 @@
 import os
 import json
 import matplotlib.pyplot as plt
-import seaborn as sns
 from io import BytesIO
-import matplotlib.dates as mdates
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from io import BytesIO
 from aiogram import Router
 
@@ -42,7 +40,6 @@ def group_transactions(transactions, date_type: DateType):
     monthly_expenses = {}
 
     for transaction in transactions:
-        print(transaction)
         date = datetime.strptime(transaction["date"], "%d-%m-%y")
         month_year = date.strftime(date_filter)
 
@@ -69,70 +66,55 @@ def generate_transaction_buffer(income, expenses, date_type: DateType):
         raise TypeError("Incorrect type")
 
     dates = sorted(
-        set(list(income.keys()) + list(expenses.keys())),
+        set(income.keys()).union(expenses.keys()),
         key=lambda x: datetime.strptime(x, date_filter),
     )
 
     income_values = [income.get(date, 0) for date in dates]
     expense_values = [expenses.get(date, 0) for date in dates]
 
-    sns.set_theme(style="whitegrid")
-    fig, ax = plt.subplots(figsize=(14, 7))
-
+    fig, ax = plt.subplots(figsize=(10, 6))
     bar_width = 0.4
+    indices = range(len(dates))
+
     income_bars = ax.bar(
-        [datetime.strptime(date, date_filter) for date in dates], 
-        income_values, 
-        width=bar_width, 
-        label="Income", 
-        color="#66c2a5", 
-        edgecolor="black", 
-        linewidth=0.6
+        [i - bar_width / 2 for i in indices],
+        income_values,
+        width=bar_width,
+        label="Income",
+        color="springgreen",
+        edgecolor="black",
     )
     expense_bars = ax.bar(
-        [datetime.strptime(date, date_filter) + timedelta(days=15) for date in dates],
-        expense_values, 
-        width=bar_width, 
-        label="Expenses", 
-        color="#fc8d62", 
-        edgecolor="black", 
-        linewidth=0.6
+        [i + bar_width / 2 for i in indices],
+        expense_values,
+        width=bar_width,
+        label="Expenses",
+        color="salmon",
+        edgecolor="black",
     )
 
-    for bar in income_bars:
+    for bar in income_bars + expense_bars:
         ax.text(
-            bar.get_x() + bar.get_width() / 2, 
-            bar.get_height() + max(income_values) * 0.02, 
-            f'{bar.get_height():,.0f}', 
-            ha='center', 
-            va='bottom', 
-            fontsize=9,
-            color="black"
-        )
-
-    for bar in expense_bars:
-        ax.text(
-            bar.get_x() + bar.get_width() / 2, 
-            bar.get_height() + max(expense_values) * 0.02, 
-            f'{bar.get_height():,.0f}', 
-            ha='center', 
-            va='bottom', 
-            fontsize=9,
-            color="black"
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f"{bar.get_height():,.0f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
         )
 
     ax.set_xlabel("Date", fontsize=12)
     ax.set_ylabel("Amount", fontsize=12)
-    ax.set_title(f"Income vs Expenses ({date_str})", fontsize=16, weight='bold')
-    ax.legend(loc="upper left", fontsize=10)
-
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y' if date_type == DateType.MONTHLY else '%d-%m-%y'))
-    plt.xticks(rotation=45, ha="right")
+    ax.set_title(
+        f"Income vs Expenses Over Time ({date_str})", fontsize=16, weight="bold"
+    )
+    ax.set_xticks(indices)
+    ax.set_xticklabels(dates, rotation=45, ha="right", fontsize=10)
 
     buffer = BytesIO()
     plt.savefig(buffer, format="png", bbox_inches="tight")
     buffer.seek(0)
-
     plt.close(fig)
 
     return buffer
