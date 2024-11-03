@@ -12,7 +12,7 @@ currency_chart_router = Router()
 @currency_chart_router.message(Command("currency_chart"))
 async def ask_currency_type(message: Message):
     await message.answer(
-        "Виберіть базову валюту для створення графіка",
+        "Виберіть базову валюту для створення графіка:",
         reply_markup=get_inline_keyboard(
             btns={
                 currency: f"selected_currency:{currency}"
