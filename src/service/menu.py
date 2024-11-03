@@ -10,4 +10,7 @@ menu = [
     BotCommand(command='history_from_date', description="історія транзакцій які були виконані у певну дату"),
     BotCommand(command='history_plot_monthly', description="графік транзакцій(помісячно)"),
     BotCommand(command='history_plot_day', description="графік транзакцій(поденно)"),
-]
+    BotCommand(command='exchange', description="обміняти свої кошти або введені"),
+    BotCommand(command='currency_chart', description="подивитись курс валют"),
+    BotCommand(command='balance', description="подивитись свій баланс"),
+]   
