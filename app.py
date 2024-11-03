@@ -1,10 +1,12 @@
 import os
 import asyncio
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, types
 from aiogram.utils.deep_linking import create_start_link
 
 from dotenv import load_dotenv
+
+from src.service.menu import menu
 
 from src.handlers import (
     history_router,
@@ -21,6 +23,7 @@ async def main():
     bot = Bot(token=os.getenv("TOKEN"))
     dp = Dispatcher()
     link = await create_start_link(bot, "start", encode=True)
+    await bot.set_my_commands(commands=menu, scope=types.BotCommandScopeAllPrivateChats())
     print(link)
     routers = [
         info_router,
@@ -30,7 +33,7 @@ async def main():
         currency_exchange_router,
     ]
     dp.include_routers(*routers)
-    print("Test 1")
+    print("Bot was started")
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

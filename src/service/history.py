@@ -1,8 +1,11 @@
 import os
 import json
 import matplotlib.pyplot as plt
+import seaborn as sns
+from io import BytesIO
+import matplotlib.dates as mdates
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from io import BytesIO
 from aiogram import Router
 
@@ -73,23 +76,60 @@ def generate_transaction_buffer(income, expenses, date_type: DateType):
     income_values = [income.get(date, 0) for date in dates]
     expense_values = [expenses.get(date, 0) for date in dates]
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.set_theme(style="whitegrid")
 
-    ax.bar(
-        dates, income_values, width=0.1, label="Income", color="green", align="center"
+    fig, ax = plt.subplots(figsize=(14, 7))
+
+    bar_width = 0.35
+    income_bars = ax.bar(
+        [datetime.strptime(date, date_filter) for date in dates], 
+        income_values, 
+        width=bar_width, 
+        label="Income", 
+        color=sns.color_palette("crest", as_cmap=True)(0.6), 
+        edgecolor="black", 
+        linewidth=0.6
     )
-    ax.bar(
-        dates, expense_values, width=0.1, label="Expenses", color="red", align="edge"
+    expense_bars = ax.bar(
+        [datetime.strptime(date, date_filter) + timedelta(days=15) for date in dates],
+        expense_values, 
+        width=bar_width, 
+        label="Expenses", 
+        color=sns.color_palette("flare", as_cmap=True)(0.6), 
+        edgecolor="black", 
+        linewidth=0.6
     )
 
-    ax.set_xlabel("Month")
-    ax.set_ylabel("Amount")
-    ax.set_title(f"Income vs Expenses {date_str}")
-    ax.legend()
+    for bar in income_bars:
+        ax.text(
+            bar.get_x() + bar.get_width() / 2, 
+            bar.get_height(), 
+            f'{bar.get_height():,.0f}', 
+            ha='center', 
+            va='bottom', 
+            fontsize=10
+        )
+
+    for bar in expense_bars:
+        ax.text(
+            bar.get_x() + bar.get_width() / 2, 
+            bar.get_height(), 
+            f'{bar.get_height():,.0f}', 
+            ha='center', 
+            va='bottom', 
+            fontsize=10
+        )
+
+    ax.set_xlabel("Date", fontsize=12)
+    ax.set_ylabel("Amount", fontsize=12)
+    ax.set_title(f"Income vs Expenses ({date_str})", fontsize=16, weight='bold')
+    ax.legend(loc="upper left", fontsize=10)
+
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %Y' if date_type == DateType.MONTHLY else '%d-%m-%y'))
     plt.xticks(rotation=45, ha="right")
 
     buffer = BytesIO()
-    plt.savefig(buffer, format="png")
+    plt.savefig(buffer, format="png", bbox_inches="tight")
     buffer.seek(0)
 
     plt.close(fig)

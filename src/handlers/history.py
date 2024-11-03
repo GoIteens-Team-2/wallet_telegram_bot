@@ -7,6 +7,8 @@ from aiogram.fsm.context import FSMContext
 
 
 from ..states.MessageState import MessageState
+from ..states.from_to_states import from_to_state
+
 
 from ..service.data_management import data_manager
 from ..service.history import (
@@ -27,7 +29,7 @@ user_data = {}
 user_input_dates = {}
 
 
-@history_router.message(Command("testhistory"))
+@history_router.message(Command("test_history"))
 async def show_transaction_history_options(message: Message):
     buttons = {
         "Історія витрат": "history_expenses",
@@ -46,7 +48,7 @@ async def show_transaction_history_options(message: Message):
     )
 
 
-@history_router.message(Command("historyExpenses"))
+@history_router.message(Command("history_expenses"))
 @history_router.callback_query(F.data == "history_expenses")
 async def transaction_history_expenses(event: Message | CallbackQuery):
     user_id = event.from_user.id
@@ -77,7 +79,7 @@ async def transaction_history_expenses(event: Message | CallbackQuery):
     await event.answer(f"Історія ваших витрат:\n{history_expenses}")
 
 
-@history_router.message(Command("historyIncomes"))
+@history_router.message(Command("history_incomes"))
 @history_router.callback_query(F.data == "history_incomes")
 async def transaction_history_incomes(event: Message | CallbackQuery):
     user_id = event.from_user.id
@@ -110,18 +112,18 @@ async def transaction_history_incomes(event: Message | CallbackQuery):
     await event.answer(f"Історія ваших доходів:\n{history_incomes}")
 
 
-@history_router.message(Command("historyFromDate"))
+@history_router.message(Command("history_from_date"))
 @history_router.callback_query(F.data == "history_from_date")
 async def ask_for_date(event: Message | CallbackQuery, state: FSMContext):
     if isinstance(event, CallbackQuery):
         event = event.message
-    await state.set_state(MessageState.quest_1)
+    await state.set_state(from_to_state.date_his_of_date)
     await event.answer(
         "Введіть дату у форматі DD-MM-YY, з якої ви хочете побачити транзакції:"
     )
 
 
-@history_router.message(MessageState.quest_1)
+@history_router.message(from_to_state.date_of_form)
 async def transaction_from_date(message: Message, state: FSMContext):
     await state.clear()
 
@@ -174,15 +176,15 @@ async def transaction_from_date(message: Message, state: FSMContext):
 async def ask_first_date(event: Message | CallbackQuery, state: FSMContext):
     if isinstance(event, CallbackQuery):
         event = event.message
-    await state.set_state(MessageState.quest_3)
+    await state.set_state(MessageState.first_from_to_form)
 
-    await message.answer("Введіть першу дату у форматі dd-mm-yyyy:")
+    await event.answer("Введіть першу дату у форматі dd-mm-yyyy:")
 
 
-@history_router.message(MessageState.quest_3)
+@history_router.message(MessageState.first_from_to_form)
 async def handle_first_date(message: Message, state: FSMContext):
-    await state.update_data(quest_4=message.text)
-    await state.set_state(MessageState.quest_4)
+    await state.update_data(second_Date_his_from_to=message.text)
+    await state.set_state(MessageState.second_from_to_form)
 
     first_date_text = message.text.strip()
     try:
@@ -198,7 +200,7 @@ async def handle_first_date(message: Message, state: FSMContext):
         )
 
 
-@history_router.message(MessageState.quest_4)
+@history_router.message(MessageState.second_from_to_form)
 async def handle_second_date(message: Message, state: FSMContext):
     await state.clear()
 
@@ -236,16 +238,16 @@ async def handle_second_date(message: Message, state: FSMContext):
         )
 
 
-@history_router.message(Command("historyPlot"))
+@history_router.message(Command("history_plot"))
 @history_router.callback_query(F.data == "history_plot")
 async def send_transaction_history(event: Message | CallbackQuery ):
-    user_id = message.from_user.id
+    user_id = event.from_user.id
     if isinstance(event, CallbackQuery):
         event = event.message
     transactions = load_user_transactions(user_id)
 
     if not transactions:
-        await message.answer("У вас немає транзакцій")
+        await event.answer("У вас немає транзакцій")
         return
     try:
         monthly_income, monthly_expenses = group_transactions(
@@ -256,23 +258,23 @@ async def send_transaction_history(event: Message | CallbackQuery ):
             monthly_income, monthly_expenses, DateType.MONTHLY
         )
     except TypeError:
-        await message.answer("Неправильний формат дати для генерації графіку.")
+        await event.answer("Неправильний формат дати для генерації графіку.")
         return
 
     graph_image = BufferedInputFile(graph.read(), "plot.png")
-    await message.answer_photo(photo=graph_image, caption="Графік транзакцій помісячно")
+    await event.answer_photo(photo=graph_image, caption="Графік транзакцій помісячно")
 
 
-@history_router.message(Command("historyPlotDay"))
+@history_router.message(Command("history_plot_day"))
 @history_router.callback_query(F.data == "history_plot_day")
 async def send_transaction_history(event: Message | CallbackQuery):
-    user_id = message.from_user.id
+    user_id = event.from_user.id
     if isinstance(event, CallbackQuery):
         event = event.message
     transactions = load_user_transactions(user_id)
 
     if not transactions:
-        await message.answer("У вас немає транзакцій")
+        await event.answer("У вас немає транзакцій")
         return
 
     try:
@@ -284,11 +286,11 @@ async def send_transaction_history(event: Message | CallbackQuery):
             daily_income, daily_expenses, DateType.DAILY
         )
     except TypeError:
-        await message.answer("Неправильний формат дати для генерації графіку.")
+        await event.answer("Неправильний формат дати для генерації графіку.")
         return
 
     graph_image = BufferedInputFile(graph.read(), "plot.png")
-    await message.answer_photo(
+    await event.answer_photo(
         photo=graph_image, caption="Графік ваших транзакцій(поденно)"
     )
 
