@@ -8,6 +8,6 @@ menu = [
     BotCommand(command='history_expenses', description="історія витрат"),
     BotCommand(command='history_from_to', description="історія з-до"),
     BotCommand(command='history_from_date', description="історія транзакцій які були виконані у певну дату"),
-    BotCommand(command='history_plot', description="графік транзакцій(помісячно)"),
+    BotCommand(command='history_plot_monthly', description="графік транзакцій(помісячно)"),
     BotCommand(command='history_plot_day', description="графік транзакцій(поденно)"),
 ]

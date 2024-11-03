@@ -238,7 +238,7 @@ async def handle_second_date(message: Message, state: FSMContext):
         )
 
 
-@history_router.message(Command("history_plot"))
+@history_router.message(Command("history_plot_monthly"))
 @history_router.callback_query(F.data == "history_plot")
 async def send_transaction_history(event: Message | CallbackQuery ):
     user_id = event.from_user.id

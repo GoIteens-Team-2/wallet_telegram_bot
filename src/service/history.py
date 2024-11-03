@@ -77,16 +77,15 @@ def generate_transaction_buffer(income, expenses, date_type: DateType):
     expense_values = [expenses.get(date, 0) for date in dates]
 
     sns.set_theme(style="whitegrid")
-
     fig, ax = plt.subplots(figsize=(14, 7))
 
-    bar_width = 0.35
+    bar_width = 0.4
     income_bars = ax.bar(
         [datetime.strptime(date, date_filter) for date in dates], 
         income_values, 
         width=bar_width, 
         label="Income", 
-        color=sns.color_palette("crest", as_cmap=True)(0.6), 
+        color="#66c2a5", 
         edgecolor="black", 
         linewidth=0.6
     )
@@ -95,7 +94,7 @@ def generate_transaction_buffer(income, expenses, date_type: DateType):
         expense_values, 
         width=bar_width, 
         label="Expenses", 
-        color=sns.color_palette("flare", as_cmap=True)(0.6), 
+        color="#fc8d62", 
         edgecolor="black", 
         linewidth=0.6
     )
@@ -103,21 +102,23 @@ def generate_transaction_buffer(income, expenses, date_type: DateType):
     for bar in income_bars:
         ax.text(
             bar.get_x() + bar.get_width() / 2, 
-            bar.get_height(), 
+            bar.get_height() + max(income_values) * 0.02, 
             f'{bar.get_height():,.0f}', 
             ha='center', 
             va='bottom', 
-            fontsize=10
+            fontsize=9,
+            color="black"
         )
 
     for bar in expense_bars:
         ax.text(
             bar.get_x() + bar.get_width() / 2, 
-            bar.get_height(), 
+            bar.get_height() + max(expense_values) * 0.02, 
             f'{bar.get_height():,.0f}', 
             ha='center', 
             va='bottom', 
-            fontsize=10
+            fontsize=9,
+            color="black"
         )
 
     ax.set_xlabel("Date", fontsize=12)
