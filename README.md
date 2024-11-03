@@ -1,10 +1,12 @@
-# Flask portfolio by Oleh Skupeiko
+# Wallet-bot project
+
+
+Це wallet-bot, чи просто бот гаманець. У його функції входять транзакції та конвертація валют з описом того, на що була транзакція (за вашим бажанням). Проект розробляють - Семен, Вова, Ростислав. Бот був розроблений на мові Python за допомогою aiogram та додаткових бібліотек: python-dotenv, requests, matplotlib, seaborn
+
 
 ## Setup instruction
 
-Це wallet-bot, чи просто бот гаманець. У його функції входять транзакції та конвертація валют з описом того, на що була транзакція (за вашим бажанням). Проект розробляють - Семен, Вова, Ростислав. Бібліотеки які були використані: aiogram, python-dotenv, requests, matplotlib, seaborn"
 
-### Local setup 
 
 ****
 
@@ -26,30 +28,12 @@ $ source .venv/bin/activate
 $ pip install -r requirements.txt
 ```
 
-**Run database container**
-
-```
-$ docker-compose up -d db
-```
-
-**Add migrations to database**
-
-```
-$ flask db migrate
-```
 
 **Run application**
 
 ```
-$ flask run
+$ python app.py
 ```
 
 ****
 
-### Setup with docker
-
-****
-
-```
-$ sudo docker-compose up -d --build
-```
